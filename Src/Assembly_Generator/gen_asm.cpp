@@ -20,32 +20,38 @@ std::string Generator::generate() {
 
     // --- THE PRINT HELPER ---
     m_output << "_print_int:\n"
-         << "    mov rsi, rsp\n"
-         << "    sub rsp, 32\n"       // Allocate 32 bytes on stack
-         << "    mov r8, rsi\n"       // r8 will be our "moving" pointer
-         << "    dec r8\n"
-         << "    mov byte [r8], 10\n" // Put Newline (\n) at the very end
-         << "    mov rbx, 10\n"
-         << ".loop:\n"
-         << "    xor rdx, rdx\n"
-         << "    div rbx\n"           // RAX / 10 -> RAX (quotient), RDX (remainder)
-         << "    add rdx, 48\n"       // Convert remainder to ASCII
-         << "    dec r8\n"
-         << "    mov [r8], dl\n"      // Store the digit
-         << "    test rax, rax\n"
-         << "    jnz .loop\n"         // Keep going until RAX is 0
-         << "\n"
-         << "    ; --- The Syscall ---\n"
-         << "    mov rax, 1\n"         // syscall: write
-         << "    mov rdi, 1\n"         // fd: stdout
-         << "    mov rsi, r8\n"        // Start of our string (where r8 ended up)
-         << "    mov rdx, rsp\n"       // Calculate length: original_rsp - r8
-         << "    add rdx, 32\n"        // (Correcting for the sub rsp)
-         << "    sub rdx, r8\n"        
-         << "    syscall\n"
-         << "\n"
-         << "    add rsp, 32\n"        // Clean up buffer
-         << "    ret\n";
+     << "    test rax, rax\n"
+     << "    jns .P1\n"           // If positive, jump to P1
+     << "    push rax\n"          // Save RAX
+     << "    mov rax, 1\n"        // sys_write
+     << "    mov rdi, 1\n"        // stdout
+     << "    mov rsi, minus_sign\n"
+     << "    mov rdx, 1\n"
+     << "    syscall\n"
+     << "    pop rax\n"
+     << "    neg rax\n"           // Convert to positive
+     << ".P1:\n"
+     << "    mov rbx, 10\n"
+     << "    push 10\n"           // Push newline as string terminator
+     << "    mov r12, 1\n"        // r12 will track our string length
+     << ".loop:\n"
+     << "    xor rdx, rdx\n"
+     << "    div rbx\n"
+     << "    add rdx, 48\n"       // Convert to ASCII
+     << "    push rdx\n"          // Push digit to stack
+     << "    inc r12\n"
+     << "    test rax, rax\n"
+     << "    jnz .loop\n"
+     << ".print_loop:\n"
+     << "    mov rax, 1\n"        // sys_write
+     << "    mov rdi, 1\n"        // stdout
+     << "    mov rsi, rsp\n"      // Top of stack is our character
+     << "    mov rdx, 1\n"        // Just print one char at a time
+     << "    syscall\n"
+     << "    pop rax\n"           // Clean that char off the stack
+     << "    dec r12\n"
+     << "    jnz .print_loop\n"
+     << "    ret\n";
 
     // --- Data Section ---
     m_output << "section .data\n"
