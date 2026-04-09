@@ -1,6 +1,15 @@
-let x = 5;
-let y = x - 2;
-x = x - 1;
-print(y);
-
-if (x) {print((y+x*5)/2);};
+let a = 3;
+while (a) {
+    let b = a;
+    while (b) {
+        let c = b;
+        while (c) {
+            print(a);
+            print(b);
+            print(c);
+            c = c - 1;
+        }
+        b = b - 1;
+    }
+    a = a - 1;
+}

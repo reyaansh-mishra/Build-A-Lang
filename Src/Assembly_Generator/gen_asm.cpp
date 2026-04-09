@@ -170,4 +170,20 @@ void Generator::genStatement(const ASTNode* stmt) {
         // 5. Final label
         m_output << label_end << ":\n";
     }
+
+    if (auto *while_node = dynamic_cast<const WhileStatementNode*>(stmt)) {
+        int label_id = m_label_count++;
+        std::string start_label = ".L_while_start_" + std::to_string(label_id);
+        std::string end_label = ".L_while_end_" + std::to_string(label_id);
+
+        m_output << start_label << ":\n"; // --- The Re-entry Point ---
+        genExpr(while_node->condition);
+        m_output << "    cmp rax, 0\n";
+        m_output << "    je " << end_label << "\n"; // Exit if false
+
+        for (auto s : while_node->body->statements) genStatement(s);
+
+        m_output << "    jmp " << start_label << "\n"; // --- The Loop Back ---
+        m_output << end_label << ":\n";
+    }
 }

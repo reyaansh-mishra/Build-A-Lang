@@ -181,6 +181,17 @@ ASTNode* Parser::parseStatement() {
             }
             return m_arena.alloc<IfStatementNode>(condition, then_block, else_block);
         };
+
+        case Tokens::While: {
+            Advance();  // Consume 'while'
+            Consume(Tokens::LParen, "Expected '('");
+            auto* condition = parseExpression();
+            Consume(Tokens::RParen, "Expected ')'");
+
+            auto body = parseBlock();
+            return m_arena.alloc<WhileStatementNode>(condition, body);
+
+        };
         
 
         default: {

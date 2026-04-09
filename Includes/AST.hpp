@@ -101,3 +101,12 @@ struct AssignmentNode : public ASTNode {
         return "ASSIGN(" + std::string(name) + " = " + expr->dump() + ")";
     }
 };
+
+struct WhileStatementNode : public ASTNode {
+    ASTNode* condition;
+    BlockNode* body;
+    WhileStatementNode(ASTNode* cond, BlockNode* b) : condition(cond), body(b) {};
+    std::string dump() const override {
+        return "WHILE(" + condition->dump() + ") " + body->dump();
+    }
+};
