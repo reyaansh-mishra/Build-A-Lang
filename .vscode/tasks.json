@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "LPP: Debug & Test Run",
+            "type": "shell",
+            // This tells CMake to build 'lpp' AND execute the 'run' target logic
+            "command": "cd build/debug && cmake --build . --target run",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            }
+        }
+    ]
+}

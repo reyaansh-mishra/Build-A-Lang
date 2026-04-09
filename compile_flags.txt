@@ -1,0 +1,8 @@
+-Wall
+-Werror
+-Wextra
+-std=c++23
+-I/home/reyaansh/Projects/Build-A-Lang/Includes/
+-g
+-fsanitize=address,undefined,undefined-trap
+-fno-omit-frame-pointer
