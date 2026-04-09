@@ -131,4 +131,30 @@ void Generator::genStatement(const ASTNode* stmt) {
         genExpr(p->expr);      // Puts result in RAX
         m_output << "    call _print_int\n";
     }
+
+    if (auto *if_stmt = dynamic_cast<const IfStatementNode*>(stmt)) {
+        int label_id = m_label_count++;
+        std::string label_else = ".L_else_" + std::to_string(label_id);
+        std::string label_end = ".L_end_" + std::to_string(label_id);
+
+        // 1. Evaluate condition (result in RAX)
+        genExpr(if_stmt->condition);
+        
+        // 2. If RAX is 0 (false), jump to else (or end if no else)
+        m_output << "    cmp rax, 0\n";
+        m_output << "    je " << (if_stmt->else_block ? label_else : label_end) << "\n";
+
+        // 3. Generate 'then' block
+        for (auto* s : if_stmt->then_block->statements) genStatement(s);
+        m_output << "    jmp " << label_end << "\n";
+
+        // 4. Generate 'else' block if it exists
+        if (if_stmt->else_block) {
+            m_output << label_else << ":\n";
+            for (auto* s : if_stmt->else_block->statements) genStatement(s);
+        }
+
+        // 5. Final label
+        m_output << label_end << ":\n";
+    }
 }

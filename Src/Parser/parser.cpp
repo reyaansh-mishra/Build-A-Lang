@@ -108,6 +108,14 @@ void Parser::debug_walk() {
 // ------------------------------------------------------------------------------ //
 
 ASTNode* Parser::parseStatement() {
+
+    // The "Every End" Fix: Allow standalone semicolons
+    if (Peek().TYPE == Tokens::Semicolon) {
+        Advance(); 
+        return nullptr; // Return nothing, parse() will just skip this null
+    }
+
+    
     switch (Peek().TYPE) {
         case Tokens::Ret: {
             Advance(); // ret
@@ -147,6 +155,22 @@ ASTNode* Parser::parseStatement() {
             Consume(Tokens::Semicolon, "Expected ';' after print statement");
 
             return m_arena.alloc<PrintNode>(std::move(expr));
+        };
+
+        case Tokens::If: {
+            Advance();  // Consume 'if'
+            Consume(Tokens::LParen, "Expected '('");
+            auto* condition = parseExpression();
+            Consume(Tokens::RParen, "Expected ')'");
+            
+            auto* then_block = parseBlock();
+            BlockNode* else_block = nullptr;
+            
+            if (Peek().TYPE == Tokens::Else) {
+                Advance();
+                else_block = parseBlock();
+            }
+            return m_arena.alloc<IfStatementNode>(condition, then_block, else_block);
         };
         
 
@@ -211,3 +235,17 @@ ASTNode* Parser::parseTerm() {
     }
     return left;
 }
+
+BlockNode *Parser::parseBlock() {
+    Consume(Tokens::LBrace, "Expected '{'");
+    auto *block = m_arena.alloc<BlockNode>();
+
+    while (Peek().TYPE != Tokens::RBrace) {
+        block->statements.push_back(parseStatement());
+    };
+
+    Consume(Tokens::RBrace, "Expected '}'");
+
+
+    return block;
+};

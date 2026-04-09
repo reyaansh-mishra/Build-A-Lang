@@ -7,7 +7,7 @@
 
 enum class Tokens {
     // Keywords:
-    Func, Ret, Int, Let, Print,
+    Func, Ret, Int, Let, Print, If, Else,
 
     // Literals:
     Identifier, Number,
@@ -44,7 +44,9 @@ class Lexer {
             {"let", Tokens::Let},
             {"ret", Tokens::Ret},
             {"print", Tokens::Print},
-            {"function", Tokens::Func}
+            {"func", Tokens::Func},
+            {"if", Tokens::If},
+            {"else", Tokens::Else},
         };
 
         std::string readNumber() {

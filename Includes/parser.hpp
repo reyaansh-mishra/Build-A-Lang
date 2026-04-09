@@ -35,4 +35,5 @@ class Parser {
         ASTNode* parseExpression();
         ASTNode* parsePrimary();
         ASTNode* parseTerm();
+        BlockNode *parseBlock();
 };

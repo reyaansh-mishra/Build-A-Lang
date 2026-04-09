@@ -4,3 +4,4 @@ lpp
 out*
 *.o
 *.s
+test.lpp

@@ -1,4 +1,6 @@
-let zero = 0;
-let neg = 0 - 5;
-let result = zero + neg;
-print(result);
+let check = 1;
+if (check) {
+    print(100);
+} else {
+    print(200);
+}
