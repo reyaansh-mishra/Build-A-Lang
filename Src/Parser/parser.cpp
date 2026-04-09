@@ -107,6 +107,18 @@ void Parser::debug_walk() {
 // ------------------------ START OF AST/ADV. LOGIC ----------------------------- //
 // ------------------------------------------------------------------------------ //
 
+// New Top Level
+ASTNode* Parser::parseExpression() {
+    auto left = parseAdditive(); // Handles + and -
+
+    while (Peek().TYPE == Tokens::DoubleEqual || Peek().TYPE == Tokens::NotEqual) {
+        Token_s op = Advance();
+        auto right = parseAdditive();
+        left = m_arena.alloc<BinaryExprNode>(m_arena.dup_string(op.value), left, right);
+    }
+    return left;
+}
+
 ASTNode* Parser::parseStatement() {
 
     // The "Every End" Fix: Allow standalone semicolons
@@ -233,7 +245,7 @@ ASTNode* Parser::parsePrimary() {
 };
 
 // 1. Level: Addition and Subtraction (Lowest Priority)
-ASTNode* Parser::parseExpression() {
+ASTNode* Parser::parseAdditive() {
     auto left = parseTerm(); // Always try to parse a "Term" first
 
     while (Peek().TYPE == Tokens::Plus || Peek().TYPE == Tokens::Minus) {

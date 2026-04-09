@@ -1,15 +1,28 @@
-let a = 3;
-while (a) {
-    let b = a;
-    while (b) {
-        let c = b;
-        while (c) {
-            print(a);
-            print(b);
-            print(c);
-            c = c - 1;
+// Compiler breaker test
+let x = 5;          // top-level variable
+let y = 2;
+
+while (x > 0) {     // outer loop
+    // redeclare x inside loop (shadowing)
+    let x = y + 1;  // should reset each iteration
+    print(x);       // expect 3 every time
+    print(y);
+
+    let z = x * 2;  // expressions inside loop
+    print(z);       // 6
+
+    while (z > y) { // nested loop
+        let z = z - 1; // inner shadow
+        print(z);       // counts down from 5 to 2
+        if (z < 4) {
+            print(x + z); // expressions with precedence
         }
-        b = b - 1;
     }
-    a = a - 1;
+
+    x = x - 1;       // outer loop decrement
 }
+
+// this should fail: variable not declared
+print(a); // should throw an error
+
+// end

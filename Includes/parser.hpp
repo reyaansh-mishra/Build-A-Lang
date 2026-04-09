@@ -33,6 +33,7 @@ class Parser {
 
         ASTNode* parseStatement();
         ASTNode* parseExpression();
+        ASTNode *parseAdditive();
         ASTNode* parsePrimary();
         ASTNode* parseTerm();
         BlockNode *parseBlock();

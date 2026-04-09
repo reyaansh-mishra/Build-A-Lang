@@ -38,7 +38,19 @@ std::vector<Token_s> Lexer::tokenize() {
             case '+': tokens_vec.push_back({Tokens::Plus, "+"}); break;
             case '-': tokens_vec.push_back({Tokens::Minus, "-"}); break;
             case '*': tokens_vec.push_back({Tokens::Multiply, "*"}); break;
-            case '/': tokens_vec.push_back({Tokens::Divide, "/"}); break;
+
+            case '/':
+                if (peek(1) == '/') {
+                    // Line comment: Skip until newline
+                    while (pos < src.length() && peek(0) != '\n') {
+                        pos++;
+                    }
+                    // Note: The loop ends on '\n'. The 'pos++' at the bottom of 
+                    // the switch will move us past the newline character itself.
+                } else {
+                    tokens_vec.push_back({Tokens::Divide, "/"});
+                }
+                break;
 
             case '=':
                 if (peek(1) == '=') {

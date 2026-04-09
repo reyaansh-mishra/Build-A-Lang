@@ -99,6 +99,16 @@ void Generator::genExpr(const ASTNode* expr) {
             m_output << "    setne al\n";      // Set if Not Equal
             m_output << "    movzx rax, al\n";
         }
+        else if (bin->op == "==") {
+            m_output << "    cmp rax, rbx\n";
+            m_output << "    sete al\n";       // Set AL to 1 if Zero Flag is set (Equal)
+            m_output << "    movzx rax, al\n"; // Clear the rest of RAX
+        }
+        else if (bin->op == "!=") {
+            m_output << "    cmp rax, rbx\n";
+            m_output << "    setne al\n";      // Set AL to 1 if Zero Flag is NOT set
+            m_output << "    movzx rax, al\n";
+        }
     }
 
     else if (auto *unary = dynamic_cast<const UnaryExprNode*>(expr)) {
