@@ -115,6 +115,15 @@ ASTNode* Parser::parseStatement() {
         return nullptr; // Return nothing, parse() will just skip this null
     }
 
+    if (Peek().TYPE == Tokens::Identifier && Peek(1).TYPE == Tokens::Equal) {
+        Token_s ident = Advance(); // The name
+        Advance();                // The '='
+        auto* expr = parseExpression();
+        Consume(Tokens::Semicolon, "Expected ';' after assignment");
+        
+        return m_arena.alloc<AssignmentNode>(m_arena.dup_string(ident.value), expr);
+    }
+
     
     switch (Peek().TYPE) {
         case Tokens::Ret: {

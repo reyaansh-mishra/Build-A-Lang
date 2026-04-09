@@ -4,7 +4,6 @@
 #include <string>
 
 struct ASTNode {
-    virtual ~ASTNode() = default;
     virtual std::string dump() const = 0;
 };
 
@@ -89,5 +88,16 @@ struct ProgramNode : public ASTNode {
         std::string out = "--- PROGRAM AST ---\n";
         for (auto s : statements) out += "  " + s->dump() + "\n";
         return out;
+    }
+};
+
+struct AssignmentNode : public ASTNode {
+    std::string_view name;
+    ASTNode *expr;
+
+    AssignmentNode(std::string_view n, ASTNode* e) : name(n), expr(e) {}
+
+    std::string dump() const override {
+        return "ASSIGN(" + std::string(name) + " = " + expr->dump() + ")";
     }
 };

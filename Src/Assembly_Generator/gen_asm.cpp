@@ -121,6 +121,19 @@ void Generator::genStatement(const ASTNode* stmt) {
         m_vars[std::string(var->name)] = m_stack_ptr;
         m_output << "    mov [rbp - " << m_stack_ptr << "], rax\n";
     }
+
+    if (auto *asgn = dynamic_cast<const AssignmentNode*>(stmt)) {
+        genExpr(asgn->expr); // Puts new value in RAX
+        
+        // Look up where 'x' was stored during its 'let' declaration
+        if (m_vars.find(std::string(asgn->name)) == m_vars.end()) {
+            throw std::runtime_error("Undeclared variable: " + std::string(asgn->name));
+        }
+        
+        int offset = m_vars[std::string(asgn->name)];
+        m_output << "    mov [rbp - " << offset << "], rax\n";
+    }
+
     else if (auto *ret = dynamic_cast<const ReturnNode*>(stmt)) {
         genExpr(ret->expr);    // Put result in RAX
         m_output << "    mov rdi, rax\n"; // Move result to exit code register

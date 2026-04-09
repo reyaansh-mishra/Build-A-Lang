@@ -1,6 +1,6 @@
-let check = 1;
-if (check) {
-    print(100);
-} else {
-    print(200);
-}
+let x = 5;
+let y = x - 2;
+x = x - 1;
+print(y);
+
+if (x) {print((y+x*5)/2);};
