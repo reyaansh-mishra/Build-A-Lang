@@ -36,12 +36,6 @@ int main(int argc, char* argv[]) {
         Lexer lexer(source);
         std::vector<Token_s> tokens = lexer.tokenize();
 
- 
-        // DEBUG PRINT
-        for (const auto& t : tokens) {
-            std::cout << "Token: " << (int)t.TYPE << " | Value: '" << t.value << "'" << std::endl;
-        }
-
         // 3. Parse (The Walk)
         Arena arena; // Create it here so it lives for the whole program
         Parser parser(std::move(tokens), arena); 

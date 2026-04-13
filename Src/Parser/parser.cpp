@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 
 // ------------------------------------------------------------------------------ //
@@ -116,6 +117,14 @@ ASTNode* Parser::parseExpression() {
         auto right = parseAdditive();
         left = m_arena.alloc<BinaryExprNode>(m_arena.dup_string(op.value), left, right);
     }
+    while (Peek().TYPE == Tokens::DoubleEqual || Peek().TYPE == Tokens::NotEqual || 
+        Peek().TYPE == Tokens::Greater || Peek().TYPE == Tokens::Less ||
+        Peek().TYPE == Tokens::GreaterEqual || Peek().TYPE == Tokens::LessEqual) {
+        Token_s op = Advance();
+        auto right = parseAdditive(); // Still comparing against math results
+        left = m_arena.alloc<BinaryExprNode>(m_arena.dup_string(op.value), left, right);
+    }
+
     return left;
 }
 
@@ -203,6 +212,28 @@ ASTNode* Parser::parseStatement() {
             auto body = parseBlock();
             return m_arena.alloc<WhileStatementNode>(condition, body);
 
+        };
+
+        case Tokens::Syscall: {
+            Advance(); // Consume 'syscall'
+            Consume(Tokens::LParen, "Expected '('");
+
+            // 1. Fist Arg IS the syscall identifier.
+            auto *sys_num = parseExpression();
+            std::vector<ASTNode*> args;
+
+            // 2. Loop until we hit ')'
+            while (Peek().TYPE != Tokens::RParen) {
+                if (Peek().TYPE == Tokens::Comma) {
+                    Advance(); // Skip over it
+                } else {
+                    args.push_back(parseExpression());
+                };
+            };
+            Consume(Tokens::RParen, "Expected ')'");
+
+            // 3. Ret it
+            return new SyscallNode(sys_num, args);
         };
         
 

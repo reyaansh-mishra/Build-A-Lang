@@ -110,3 +110,14 @@ struct WhileStatementNode : public ASTNode {
         return "WHILE(" + condition->dump() + ") " + body->dump();
     }
 };
+
+struct SyscallNode : public ASTNode {
+    ASTNode* sc;
+    std::vector<ASTNode*> args;
+
+    SyscallNode(ASTNode* syscall_num, std::vector<ASTNode*> arguments) : sc(syscall_num), args(arguments) {};
+
+    std::string dump() const override {
+        return "SYSCALL(" + sc->dump() + ")";
+    }
+};

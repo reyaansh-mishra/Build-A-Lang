@@ -69,12 +69,30 @@ std::vector<Token_s> Lexer::tokenize() {
                     tokens_vec.push_back({Tokens::Unknown, "!"});
                 }
                 break;
-
+            
+            case ',': tokens_vec.push_back({Tokens::Comma, ","}); break;
             case ';': tokens_vec.push_back({Tokens::Semicolon, ";"}); break;
             case '(': tokens_vec.push_back({Tokens::LParen, "("}); break;
             case ')': tokens_vec.push_back({Tokens::RParen, ")"}); break;
             case '{': tokens_vec.push_back({Tokens::LBrace, "{"}); break;
             case '}': tokens_vec.push_back({Tokens::RBrace, "}"}); break;
+
+            case '>':
+                if (peek(1) == '=') {
+                    tokens_vec.push_back({Tokens::GreaterEqual, ">="});
+                    pos++; 
+                } else {
+                    tokens_vec.push_back({Tokens::Greater, ">"});
+                }
+                break;
+            case '<':
+                if (peek(1) == '=') {
+                    tokens_vec.push_back({Tokens::LessEqual, "<="});
+                    pos++;
+                } else {
+                    tokens_vec.push_back({Tokens::Less, "<"});
+                }
+                break;
 
             default:
                 tokens_vec.push_back({Tokens::Unknown, std::string(1, currentChar)});

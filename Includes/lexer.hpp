@@ -7,16 +7,16 @@
 
 enum class Tokens {
     // Keywords:
-    Func, Ret, Int, Let, Print, If, Else, While,
+    Func, Ret, Int, Let, Print, If, Else, While, Syscall,
 
     // Literals:
     Identifier, Number,
 
     // Operators:
-    Plus, Minus, Multiply, Divide, Equal, NotEqual, DoubleEqual,
+    Plus, Minus, Multiply, Divide, Equal, NotEqual, DoubleEqual, Greater, GreaterEqual, Less, LessEqual,
     
     // Symbols:
-    Semicolon, LParen, RParen, LBrace, RBrace,
+    Semicolon, LParen, RParen, LBrace, RBrace, Comma,
 
     // Meta:
     Eof, Unknown
@@ -47,7 +47,8 @@ class Lexer {
             {"func", Tokens::Func},
             {"if", Tokens::If},
             {"else", Tokens::Else},
-            {"while", Tokens::While}
+            {"while", Tokens::While},
+            {"syscall", Tokens::Syscall}
         };
 
         std::string readNumber() {
